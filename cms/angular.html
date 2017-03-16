@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html ng-app="wApp">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<link rel="stylesheet" href="css/bootstrap.css" />
+
+	<body>
+		<div ng-view=""></div>
+	</body>
+	<script src="js/angular.js"></script>
+	<script src="js/angular-route.js"></script>
+	<script>
+		var app = angular.module('wApp', ['ngRoute']);
+		app.config(['$routeProvider', function($routeProvider) {
+			$routeProvider.when('/index', {
+				templateUrl: 'template/index.html',
+				controller: 'indexCtrl'
+			}).when('/edit/:id', {
+				templateUrl: 'template/edit.html',
+				controller: 'editCtrl'
+			})
+		}])
+		app.controller('indexCtrl', function($http, $scope) {
+			$scope.select = function() {
+				$http.get("http://localhost:6431/select").success(function(data) {
+					console.log(data);
+					$scope.lists = data.lists;
+				})
+			}
+			$scope.select()
+			$scope.submit = function() {
+				$http.get("http://localhost:6431/insert", {
+					params: {
+						name: $scope.name,
+						skill: $scope.skill
+					}
+				}).success(function(data) {
+					//增加数据成功后清空输入框
+					$scope.name = ''
+					$scope.skill = ''
+					console.log(data);
+					$scope.lists = data.lists;
+				})
+			}
+			$scope.delete = function(id) {
+				$http.get("http://localhost:6431/delete", {
+					params: {
+						id: id
+					}
+				}).success(function(data) {
+					console.log(data);
+					$scope.lists = data.lists;
+				})
+			}
+		})
+		app.controller('editCtrl', function($scope, $http, $routeParams, $window) {
+			console.log($routeParams.id);
+			$scope.selectdetail = function() {
+				$http.get('http://localhost:6431/selectdetail', {
+					params: {
+						id: $routeParams.id
+					}
+				}).success(function(data) {
+					$scope.name = data.lists[0].name
+					$scope.skill = data.lists[0].skill
+						//$scope.name = data
+				})
+			}
+			$scope.selectdetail()
+
+			$scope.edit = function() {
+				$http.get('http://localhost:6431/edit', {
+					params: {
+						name: $scope.name,
+						skill: $scope.skill,
+						id: $routeParams.id
+					}
+				}).success(function(data) {
+					$window.location.href = "#/index"
+						//$scope.name = data
+				})
+			}
+		})
+	</script>
+
+</html>

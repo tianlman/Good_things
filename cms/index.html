@@ -1,0 +1,40 @@
+<!--请求头 浏览器的信息-->
+<!--+-->
+<!--请求体 浏览器显示的内容-->
+<!--  database-sql-> nodejs(中间件) -ajax-> 前端 -->
+<!--  database-sql<- nodejs(中间件) <-ajax- 前端 -->
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<input id="name" placeholder="name" />
+		<input id="skill" placeholder="skill" />
+		<button onclick="submit()">提交</button>
+	</body>
+	<script src="js/jquery-3.1.1.min.js"></script>
+	<script>
+		function submit() {
+			$.ajax({
+				url: 'http://localhost:6431/update',
+				type: "GET",
+				data: {
+					name: $('#name').val(),
+					skill: $('#skill').val()
+				},
+				success: function(data) {
+					var info = JSON.parse(data)
+					console.log(info)
+				}
+			})
+		}
+	</script>
+
+</html>
+<!--响应头 返回服务器的信息-->
+<!--+-->
+<!--相应体 返回服务器的数据-->
